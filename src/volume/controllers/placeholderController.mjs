@@ -2,14 +2,14 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable camelcase */
 
-import getUsers from "../../import/services/axios.placeholder.mjs"
-import usersPresenter from "../presenters/usersPresenter.mjs"
-import userByIdPresenter from "../presenters/usersByIdPresenter.mjs"
-import RepositoryImpl from "../../../infra/repository/index.mjs"
-import UserRepository from "../repositories/userRespository.mjs"
-import StoreUser from "../use_cases/storeUsers.mjs"
-import RemoveUser from "../use_cases/RemoveUser.mjs"
-import UUIDGenerator from "../../support/UUIDGenerator.mjs"
+import getUsers from '../../import/services/axios.placeholder.mjs'
+import usersPresenter from '../presenters/usersPresenter.mjs'
+import userByIdPresenter from '../presenters/usersByIdPresenter.mjs'
+import RepositoryImpl from '../../../infra/repository/index.mjs'
+import UserRepository from '../repositories/userRespository.mjs'
+import StoreUser from '../use_cases/storeUsers.mjs'
+import RemoveUser from '../use_cases/RemoveUser.mjs'
+import UUIDGenerator from '../../support/UUIDGenerator.mjs'
 
 const Repository = new UserRepository(RepositoryImpl)
 
@@ -32,7 +32,7 @@ export async function getUserById(req, res, next) {
     const userId = UUIDGenerator.from(req.params.id)
     const user = await Repository.getUserBy_Id(userId)
     if (!user) {
-      return res.status(404).json({ message: "User not found" })
+      return res.status(404).json({ message: 'User not found' })
     }
     const resultUser = userByIdPresenter(user)
     return res.status(200).json(resultUser)
@@ -47,7 +47,7 @@ export async function removeUserBy_Id(req, res, next) {
     const userId = UUIDGenerator.from(req.params.id)
     const user = await Repository.getUserBy_Id(userId)
     if (!user) {
-      return res.status(404).json({ message: "User not found" })
+      return res.status(404).json({ message: 'User not found' })
     }
     const removeUserUseCase = new RemoveUser(Repository)
     await removeUserUseCase.execute(userId)

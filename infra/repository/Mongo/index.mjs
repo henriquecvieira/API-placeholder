@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-unused-vars
-import dotenv from "dotenv/config"
-import { MongoMemoryServer } from "mongodb-memory-server"
-import Mongo from "./Mongo.mjs"
-import Application from "../../../src/support/Application.mjs"
+import dotenv from 'dotenv/config'
+// import { MongoMemoryServer } from 'mongodb-memory-server'
+import Mongo from './Mongo.mjs'
+import Application from '../../../src/support/Application.mjs'
 
 let {
   DB_HOST_LOCAL,
@@ -10,7 +10,7 @@ let {
   DB_PASSWORD_LOCAL,
   DB_NAME,
   DB_PORT_LOCAL,
-  DB_URI,
+  DB_URI
 } = process.env
 
 if (Application.isInLocalMode()) {

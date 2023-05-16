@@ -19,6 +19,8 @@
   ],
   "rules": {
     "semi": "off",
+    "no-console": "off",
+    "import/prefer-default-export": "off",
     "no-underscore-dangle": [
       "off"
     ],
@@ -32,7 +34,7 @@
     "no-unused-expressions": "off",
     "radix": "off",
     "vars-on-top": "off"
-    
+
     /*linebreak-style: ["error", "unix"]*/
   }
 }
