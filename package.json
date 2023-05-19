@@ -7,7 +7,7 @@
     "start": "node app.mjs",
     "startwin": "SET NODE_ENV=development && nodemon --trace-warnings app.mjs",
     "testwin": "SET NODE_TEST=true && mocha --require-esm --recursive ./test/**/*.mjs --exit",
-    "dev": "nodemon index.mjs"
+    "dev": "nodemon app.mjs"
   },
   "license": "ISC",
   "type": "module",
@@ -15,7 +15,7 @@
     "adm-zip": "^0.5.10",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
-    "aws-sdk": "^2.1378.0",
+    "aws-sdk": "^2.1379.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",

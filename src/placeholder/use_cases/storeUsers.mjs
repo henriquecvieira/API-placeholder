@@ -14,29 +14,28 @@ class StoreUsers {
   async execute(params) {
     const resultCreateUser = []
     const resultExistentUsers = []
-    // for (let i = 0; i < params.length; i++) {
-    //   var hasUser = await this.repository.getUserById(params[i].id)
-    //   const resultUser = usersBy_IdPresenter(hasUser)
     for (const param of params) {
       let hasUser = await this.repository.getUserById(param.id)
-      const resultUser = usersBy_IdPresenter(hasUser)
-
       if (hasUser.length > 0) {
         console.log("users already exists!")
+        const resultUser = usersBy_IdPresenter(hasUser)
         resultExistentUsers.push(resultUser)
         continue
       }
-      // params[i]._id = UUIDGenerator.generate()
-      // await this.repository.save(params[i])
-      // resultCreateUser.push(params[i])
       const newUser = {
-        ...param,
+        createdAt: new Date(),
         _id: UUIDGenerator.generate(),
+        ...param,
       }
       await this.repository.save(newUser)
       resultCreateUser.push(newUser)
     }
-    return { resultExistentUsers, resultCreateUser }
+    const responseCreateUser = resultCreateUser.map((user) => ({
+      ...user,
+      createdAt: user.createdAt.toString(),
+    }));
+
+    return { resultExistentUsers, responseCreateUser }
   }
 }
 

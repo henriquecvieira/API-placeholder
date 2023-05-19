@@ -14,14 +14,14 @@ import swaggerUi from 'swagger-ui-express'
 //   return this.toISOString()
 // }
 
-async function registerProviders(app) {
-  AppProvider.boot(app)
-  RouteProvider.boot(app)
-  CoreProvider.boot(app)
+async function registerProviders(express) {
+  AppProvider.boot(express)
+  RouteProvider.boot(express)
+  CoreProvider.boot(express)
 }
 
-function boot(app) {
-  return app.listen(
+function boot(express) {
+  return express.listen(
     Application.port,
     () => {
       console.log(`Aplicação inicializada na porta ${Application.port}.`)
@@ -29,21 +29,21 @@ function boot(app) {
   )
 }
 
-export default async (app) => {
-  app.use(Compression())
-  app.use(cors())
-  app.use(QueryString)
-  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+export default async (express) => {
+  express.use(Compression())
+  express.use(cors())
+  express.use(QueryString)
+  express.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     swaggerOptions: {
       defaultModelsExpandDepth: -1,
       docExpansion: 'none'
     }
   }))
 
-  await registerProviders(app)
+  await registerProviders(express)
 
-  const server = boot(app)
-  ExceptionHandler.handle(app, server)
+  const server = boot(express)
+  ExceptionHandler.handle(express, server)
 
   process.send && process.send('ready')
 }

@@ -23,12 +23,13 @@ function handleError(error, request, response, next) {
 
   const responseObject = {
     status,
-    message: error.message
+    message: status === 400 ? JSON.parse(error.message): error.message
   }
 
   if (!Application.isInProductionMode()) {
     responseObject.stack = error.stack || null
   }
+  console.log(responseObject)
 
   return response
     .status(status)

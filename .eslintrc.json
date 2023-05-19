@@ -20,7 +20,7 @@
   "rules": {
     "semi": "off",
     "no-console": "off",
-    "import/prefer-default-export": "off",
+    "import/prefer-default-export": "on",
     "no-underscore-dangle": [
       "off"
     ],

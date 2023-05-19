@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /* eslint-disable no-unused-vars */
 import AWS from 'aws-sdk'
 import AmazonCognitoIdentity from 'amazon-cognito-identity-js'

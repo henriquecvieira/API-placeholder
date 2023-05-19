@@ -1,10 +1,10 @@
 import healthCheck from '../../src/maintenance/healthcheck.mjs'
 import wrongWay from '../../src/maintenance/wrongWay.mjs'
-import volume from '../../src/volume/routes.mjs'
+import user from '../../src/placeholder/routes.mjs'
 
 function registerRoutes(app) {
   app.use(healthCheck)
-  app.use(volume)
+  app.use(user)
   app.use(wrongWay)
 }
 
