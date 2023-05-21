@@ -1,29 +1,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
-import * as Sentry from '@sentry/node'
-
-import Application from '../../src/support/Application.mjs'
-import BaseException from '../../src/core/exceptions/BaseException.mjs';
-
-function handleRejection(reason, promise) {
-  console.error('Unhandled Rejection at: ', reason)
-  throw reason
-}
-
-function handleException(error) {
-  console.error('Uncaught Exception thrown', error.message)
-
-  if (!isTrustedError(error)) {
-    process.exit(1)
-  }
-}
+import Application from "../../src/support/Application.mjs"
 
 function handleError(error, request, response, next) {
   const status = error.httpCode || 500
 
   const responseObject = {
     status,
-    message: status === 400 ? JSON.parse(error.message): error.message
+    message: status === 400 ? JSON.parse(error.message) : error.message,
   }
 
   if (!Application.isInProductionMode()) {
@@ -31,44 +15,11 @@ function handleError(error, request, response, next) {
   }
   console.log(responseObject)
 
-  return response
-    .status(status)
-    .json(responseObject)
-}
-
-function handleSigterm(server) {
-  console.info('SIGTERM signal received.')
-  console.info('Closing http server.')
-
-  server.close(() => {
-    console.log('Http server closed.')
-  })
-
-  Sentry.captureMessage('SIGTERM signal received.', Sentry.Severity.Error)
-
-  Sentry.close(1000).then(function () {
-    process.exit(0)
-  })
-}
-
-function isTrustedError(error) {
-  if (error instanceof BaseException) {
-    return error.isOperational
-  }
-
-  return false
+  return response.status(status).json(responseObject)
 }
 
 export default {
-  handle: (app, server) => {
-    process.on('unhandledRejection', handleRejection)
-
-    process.on('uncaughtException', handleException)
-
-    process.on('SIGTERM', () => handleSigterm(server))
-
-    process.on('SIGINT', () => handleSigterm(server))
-
+  handle: (app) => {
     app.use(handleError)
-  }
+  },
 }

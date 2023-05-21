@@ -28,22 +28,19 @@ class RepositoryWrapper {
     return this.impl.find(collection, statement.query(id))
   }
 
-  async searchUserBy_Id(collection, id) {
-    const statement = this.queries.searchUserBy_Id
+  async searchUserByCreatedId(collection, id) {
+    const statement = this.queries.searchUserByCreatedId
     return this.impl.findOne(collection, statement.query(id))
+  }
+
+  async searchUsersByDate(collection, createdAt) {
+    const statement = this.queries.searchUsersByDate
+    return this.impl.find(collection, statement.query(createdAt))
   }
 
   // async searchVolumeByIdentifier(identifier) {
   //   const statement = this.queries.searchVolumeByIdentifier
   //   return this.impl.find(statement.collection, statement.query(identifier))
-  // }
-
-  // async searchVolumeByDate(identifierProducer, dateFrom, dateTo) {
-  //   const statement = this.queries.searchVolumeByDate
-  //   return this.impl.find(
-  //     statement.collection,
-  //     statement.query(identifierProducer, dateFrom, dateTo)
-  //   )
   // }
 
   // async searchVolumeSupervisorByDate(params) {

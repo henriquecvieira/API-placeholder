@@ -2,7 +2,7 @@
   "name": "api-placeholder",
   "version": "1.0.0",
   "description": "modelo - API Server",
-  "main": "index.mjs",
+  "main": "app.mjs",
   "scripts": {
     "start": "node app.mjs",
     "startwin": "SET NODE_ENV=development && nodemon --trace-warnings app.mjs",

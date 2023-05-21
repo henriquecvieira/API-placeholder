@@ -3,9 +3,8 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
-import usersBy_IdPresenter from "../presenters/usersBy_IdPresenter.mjs"
 import UUIDGenerator from "../../support/UUIDGenerator.mjs"
-import DataNotFoundException from '../../core/exceptions/DataNotFoundException.mjs'
+import DataNotFoundException from "../../core/exceptions/DataNotFoundException.mjs"
 
 class StoreUsers {
   constructor(repository) {
@@ -14,9 +13,9 @@ class StoreUsers {
 
   async execute(id) {
     const idUser = UUIDGenerator.from(id)
-    const user = await this.repository.getUserBy_Id(idUser)
+    const user = await this.repository.getUserByCreatedId(idUser)
     if (!user) {
-      throw new DataNotFoundException('users not found!')
+      throw new DataNotFoundException("users not found!")
     }
     return user
   }

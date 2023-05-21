@@ -1,13 +1,13 @@
-import AppProvider from './providers/AppProvider.mjs'
-import Application from '../config/app.mjs'
-import Compression from './middlewares/Compression.mjs'
-import CoreProvider from '../src/core/providers/EventProvider.mjs'
-import ExceptionHandler from './exception/ExceptionHandler.mjs'
-import QueryString from './middlewares/QueryString.mjs'
-import RouteProvider from './providers/RouteProvider.mjs'
-import cors from 'cors'
-import swaggerDocument from '../infra/documents/swagger.js'
-import swaggerUi from 'swagger-ui-express'
+import AppProvider from "./providers/AppProvider.mjs"
+import Application from "../config/app.mjs"
+import Compression from "./middlewares/Compression.mjs"
+import CoreProvider from "../src/core/providers/EventProvider.mjs"
+import ExceptionHandler from "./exception/ExceptionHandler.mjs"
+import QueryString from "./middlewares/QueryString.mjs"
+import RouteProvider from "./providers/RouteProvider.mjs"
+import cors from "cors"
+import swaggerDocument from "../infra/documents/swagger.js"
+import swaggerUi from "swagger-ui-express"
 
 // Date.prototype.toJSON = function () {
 //   this.setUTCHours(this.getUTCHours() - 3)
@@ -21,29 +21,29 @@ async function registerProviders(express) {
 }
 
 function boot(express) {
-  return express.listen(
-    Application.port,
-    () => {
-      console.log(`Aplicação inicializada na porta ${Application.port}.`)
-    }
-  )
+  return express.listen(Application.port, () => {
+    console.log(`Aplicação inicializada na porta ${Application.port}.`)
+  })
 }
 
 export default async (express) => {
   express.use(Compression())
   express.use(cors())
   express.use(QueryString)
-  express.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
-    swaggerOptions: {
-      defaultModelsExpandDepth: -1,
-      docExpansion: 'none'
-    }
-  }))
+  express.use(
+    "/swagger",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument, {
+      swaggerOptions: {
+        defaultModelsExpandDepth: -1,
+        docExpansion: "none",
+      },
+    })
+  )
 
   await registerProviders(express)
 
-  const server = boot(express)
-  ExceptionHandler.handle(express, server)
+  ExceptionHandler.handle(express)
 
-  process.send && process.send('ready')
+  boot(express)
 }

@@ -10,36 +10,41 @@ class User {
 
   async getById(id) {
     const data = await this.repository.get(this.collection, id)
-
     if (data?.length === 0) {
       return null
     }
-
     return data
   }
 
   async getUserById(id) {
     const data = await this.repository.searchUserById(this.collection, id)
-
     if (!data) {
       return null
     }
-
     return data
   }
 
-  async getUserBy_Id(id) {
+  async getUserByCreatedId(id) {
     const data = await this.repository.get(this.collection, id)
-
     if (!data) {
       return null
     }
-
     return data
   }
 
   async remove(id) {
     return this.repository.remove(this.collection, id)
+  }
+
+  async searchUsersByDate(createdAt) {
+    const data = await this.repository.searchUsersByDate(
+      this.collection,
+      createdAt
+    )
+    if (!data) {
+      return null
+    }
+    return data
   }
 }
 

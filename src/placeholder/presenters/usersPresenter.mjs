@@ -1,11 +1,11 @@
 export default function usersPresenter(users) {
-  return users.map(({
-   id, name, email, address, company  }) => ({
+  return users.map(({ id, name, email, phone, website, address, company }) => ({
     id,
     name,
     email,
     address,
-    company
+    phone,
+    website,
+    company,
   }))
 }
-
