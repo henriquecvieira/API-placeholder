@@ -9,6 +9,7 @@
 import { default as searchUserById } from "./searchUserById.mjs"
 import { default as searchUserByCreatedId } from "./searchUserByCreatedId.mjs"
 import { default as searchUsersByDate } from "./searchUsersByDate.mjs"
+import { default as searchUserByEmail } from "./searchUserByEmail.mjs"
 
 export {
   // searchVolumeByIdentifier,
@@ -22,4 +23,5 @@ export {
   searchUserById,
   searchUserByCreatedId,
   searchUsersByDate,
+  searchUserByEmail,
 }

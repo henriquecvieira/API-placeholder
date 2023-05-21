@@ -11,6 +11,7 @@ import {
   getUserById,
   removeUserByCreatedId,
   getUsersByDate,
+  createUser,
 } from "./controllers/placeholderController.mjs"
 // import authToken from '../../infra/json_webtoken/authToken.mjs'
 
@@ -20,7 +21,9 @@ const router = Router()
 
 // router.route('/v1/volume/Supervisor/priceAverage/months').get(VolumePriceAverageMonthsSupervisorController.search); // add authToken.validateToken,
 router.route("/v1/users").get(users)
+router.route("/v1/user").post(createUser)
 router.route("/v1/user/:id").get(getUserById)
 router.route("/v1/user/:id").delete(removeUserByCreatedId)
 router.route("/v1/users/search/:createdAt").get(getUsersByDate)
+
 export default router

@@ -5,6 +5,7 @@
 import userByIdPresenter from "../presenters/usersByIdPresenter.mjs"
 import RepositoryImpl from "../../../infra/repository/index.mjs"
 import UserRepository from "../repositories/userRespository.mjs"
+import CreateUser from "../use_cases/CreateUser.mjs"
 import StoreUser from "../use_cases/storeUsers.mjs"
 import RemoveById from "../use_cases/RemoveById.mjs"
 import getUsersApi from "../use_cases/placeholderApiUseCase.mjs"
@@ -56,6 +57,17 @@ export async function getUsersByDate(req, res, next) {
     const searchByDateUseCase = new searchUsersByDate(Repository)
     const users = await searchByDateUseCase.execute(date)
     return res.status(200).json(users)
+  } catch (error) {
+    return next(error)
+  }
+}
+
+export async function createUser(req, res, next) {
+  try {
+    const user = req.body
+    const CreateUserUseCase = new CreateUser(Repository)
+    const createdUser = await CreateUserUseCase.execute(user)
+    return res.status(200).json(createdUser)
   } catch (error) {
     return next(error)
   }

@@ -37,6 +37,10 @@ class RepositoryWrapper {
     const statement = this.queries.searchUsersByDate
     return this.impl.find(collection, statement.query(createdAt))
   }
+  async searchUserByEmail(collection, email) {
+    const statement = this.queries.searchUserByEmail
+    return this.impl.findOne(collection, statement.query(email))
+  }
 
   // async searchVolumeByIdentifier(identifier) {
   //   const statement = this.queries.searchVolumeByIdentifier

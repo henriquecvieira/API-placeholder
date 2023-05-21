@@ -8,7 +8,6 @@ export default class searchUsersByDate {
 
   async execute(createdAt) {
     try {
-      // Lógica para realizar a busca de usuários por data
       const users = await this.repository.searchUsersByDate(createdAt)
       const resultUsers = users.map((user) => userByIdPresenter(user))
       return resultUsers

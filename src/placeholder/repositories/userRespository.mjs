@@ -3,7 +3,6 @@ class User {
     this.collection = "users"
     this.repository = repositoryImpl
   }
-
   async save(params) {
     return this.repository.save(this.collection, params)
   }
@@ -41,6 +40,14 @@ class User {
       this.collection,
       createdAt
     )
+    if (!data) {
+      return null
+    }
+    return data
+  }
+
+  async searchUserByEmail(email) {
+    const data = await this.repository.searchUserByEmail(this.collection, email)
     if (!data) {
       return null
     }
