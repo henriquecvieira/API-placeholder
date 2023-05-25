@@ -3,7 +3,7 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
-import usersBy_IdPresenter from "../presenters/usersBy_IdPresenter.mjs"
+import usersByCreatedIdPresenter from "../presenters/usersByCreatedIdPresenter.mjs"
 import UUIDGenerator from "../../support/UUIDGenerator.mjs"
 
 
@@ -11,7 +11,6 @@ class StoreUsers {
   constructor(repository) {
     this.repository = repository
   }
-
   async execute(params) {
     const resultCreateUser = []
     const resultExistentUsers = []
@@ -19,7 +18,7 @@ class StoreUsers {
       let hasUser = await this.repository.getUserById(param.id)
       if (hasUser.length > 0) {
         console.log("users already exists!")
-        const resultUser = usersBy_IdPresenter(hasUser)
+        const resultUser = usersByCreatedIdPresenter(hasUser)
         resultExistentUsers.push(resultUser)
         continue
       }
@@ -34,7 +33,7 @@ class StoreUsers {
     const responseCreateUser = resultCreateUser.map((user) => ({
       ...user,
       createdAt: user.createdAt.toString(),
-    }));
+    }))
 
     return { resultExistentUsers, responseCreateUser }
   }

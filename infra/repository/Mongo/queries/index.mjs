@@ -7,7 +7,9 @@
 // import { default as searchPriceAverageSupervisorByDate } from "./searchPriceAverageSupervisorByDate.mjs"
 // import { default as searchPriceAverageMonthsSupervisorByDate } from "./searchPriceAverageMonthsSupervisorByDate.mjs"
 import { default as searchUserById } from "./searchUserById.mjs"
-import { default as searchUserBy_Id } from "./searchUserBy_id.mjs"
+import { default as searchUserByCreatedId } from "./searchUserByCreatedId.mjs"
+import { default as searchUsersByDate } from "./searchUsersByDate.mjs"
+import { default as searchUserByEmail } from "./searchUserByEmail.mjs"
 
 export {
   // searchVolumeByIdentifier,
@@ -19,5 +21,7 @@ export {
   // searchPriceAverageSupervisorByDate,
   // searchPriceAverageMonthsSupervisorByDate,
   searchUserById,
-  searchUserBy_Id,
+  searchUserByCreatedId,
+  searchUsersByDate,
+  searchUserByEmail,
 }

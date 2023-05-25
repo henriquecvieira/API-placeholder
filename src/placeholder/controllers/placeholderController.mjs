@@ -22,7 +22,7 @@ eventEmitter.on('myEvent', handleUsers);
 
 export async function users(_, res, next) {
   try {
-    const users =  await getUsersApi()
+    const users = await getUsersApi()
     const storeUserUseCase = new StoreUser(Repository)
     const storedUser = await storeUserUseCase.execute(users)
     eventEmitter.emit('myEvent', handleUsers);
@@ -45,13 +45,35 @@ export async function getUserById(req, res, next) {
   }
 }
 
-export async function removeUserBy_Id(req, res, next) {
+export async function removeUserByCreatedId(req, res, next) {
   try {
     await SearchIdValidator.validate(req.params)
     const userId = req.params.id
     const removeByIdUseCase = new RemoveById(Repository)
     await removeByIdUseCase.execute(userId)
-    return res.status(200).json('succesfully removed')
+    return res.status(200).json("succesfully removed")
+  } catch (error) {
+    return next(error)
+  }
+}
+
+export async function getUsersByDate(req, res, next) {
+  try {
+    const date = req.query.createdAt
+    const searchByDateUseCase = new searchUsersByDate(Repository)
+    const users = await searchByDateUseCase.execute(date)
+    return res.status(200).json(users)
+  } catch (error) {
+    return next(error)
+  }
+}
+
+export async function createUser(req, res, next) {
+  try {
+    const user = req.body
+    const CreateUserUseCase = new CreateUser(Repository)
+    const createdUser = await CreateUserUseCase.execute(user)
+    return res.status(200).json(createdUser)
   } catch (error) {
     return next(error)
   }

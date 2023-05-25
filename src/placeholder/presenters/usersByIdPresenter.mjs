@@ -1,12 +1,16 @@
-/* eslint-disable no-underscore-dangle */
+export default function usersByIdPresenter(user) {
+  const { _id, id, address, phone, website, company, email, name, createdAt } =
+    user
 
-export default function usersByIdPresenter(users) {
   return {
-    _id: users._id,
-    id: users.id,
-    address: users.address,
-    company: users.company,
-    email: users.email,
-    name: users.name,
+    _id,
+    id,
+    address,
+    phone,
+    website,
+    company,
+    email,
+    name,
+    createdAt,
   }
 }
