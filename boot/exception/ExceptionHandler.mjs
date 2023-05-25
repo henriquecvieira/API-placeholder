@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
-import * as Sentry from '@sentry/node'
 
 import Application from '../../src/support/Application.mjs'
 import BaseException from '../../src/core/exceptions/BaseException.mjs';
@@ -44,11 +43,7 @@ function handleSigterm(server) {
     console.log('Http server closed.')
   })
 
-  Sentry.captureMessage('SIGTERM signal received.', Sentry.Severity.Error)
 
-  Sentry.close(1000).then(function () {
-    process.exit(0)
-  })
 }
 
 function isTrustedError(error) {

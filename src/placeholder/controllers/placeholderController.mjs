@@ -2,6 +2,8 @@
 /* eslint-disable no-shadow */
 /* eslint-disable camelcase */
 
+import EventEmitter from 'events';
+import handleUsers from '../use_cases/UsersHandler.mjs'
 import userByIdPresenter from '../presenters/usersByIdPresenter.mjs'
 import RepositoryImpl from '../../../infra/repository/index.mjs'
 import UserRepository from '../repositories/userRespository.mjs'
@@ -11,13 +13,19 @@ import getUsersApi from "../use_cases/placeholderApiUseCase.mjs";
 import SearchById from '../use_cases/SearchById.mjs'
 import SearchIdValidator from '../controllers/validators/SearchId.mjs'
 
+const eventEmitter = new EventEmitter();
+
+
+
 const Repository = new UserRepository(RepositoryImpl)
+eventEmitter.on('myEvent', handleUsers);
 
 export async function users(_, res, next) {
   try {
     const users =  await getUsersApi()
     const storeUserUseCase = new StoreUser(Repository)
     const storedUser = await storeUserUseCase.execute(users)
+    eventEmitter.emit('myEvent', handleUsers);
     return res.status(200).json(storedUser);
   } catch (error) {
     return next(error)

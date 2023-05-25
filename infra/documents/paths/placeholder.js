@@ -177,14 +177,6 @@ export default {
           required: true,
           type: 'string',
           format: 'UUID'
-        },
-        {
-          in: 'query',
-          name: 'date',
-          description: 'Date from',
-          example: 'yyyy-MM-dd',
-          required: false,
-          type: 'string'
         }
       ],
       responses: {

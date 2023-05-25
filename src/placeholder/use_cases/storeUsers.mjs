@@ -6,6 +6,7 @@
 import usersBy_IdPresenter from "../presenters/usersBy_IdPresenter.mjs"
 import UUIDGenerator from "../../support/UUIDGenerator.mjs"
 
+
 class StoreUsers {
   constructor(repository) {
     this.repository = repository
