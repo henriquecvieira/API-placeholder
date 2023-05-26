@@ -22,15 +22,18 @@ eventEmitter.on('myEvent', handleUsers);
 
 export async function users(_, res, next) {
   try {
-    const users = await getUsersApi()
-    const storeUserUseCase = new StoreUser(Repository)
-    const storedUser = await storeUserUseCase.execute(users)
-    eventEmitter.emit('myEvent', handleUsers);
+    eventEmitter.on('userCreated', handleUsers);
+
+    const users = await getUsersApi();
+    const storeUserUseCase = new StoreUser(Repository);
+    const storedUser = await storeUserUseCase.execute(users);
+
     return res.status(200).json(storedUser);
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 }
+
 
 export async function getUserById(req, res, next) {
   try {
