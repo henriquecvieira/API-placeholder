@@ -3,37 +3,31 @@
 /* eslint-disable camelcase */
 
 import EventEmitter from 'events';
-import handleUsers from '../use_cases/UsersHandler.mjs'
+import usersHandler from '../use_cases/usersHandler.mjs';
 import userByIdPresenter from '../presenters/usersByIdPresenter.mjs'
 import RepositoryImpl from '../../../infra/repository/index.mjs'
 import UserRepository from '../repositories/userRespository.mjs'
-import StoreUser from '../use_cases/storeUsers.mjs'
+import StoreUsers from '../use_cases/storeUsers.mjs'
 import RemoveById from '../use_cases/RemoveById.mjs'
 import getUsersApi from "../use_cases/placeholderApiUseCase.mjs";
 import SearchById from '../use_cases/SearchById.mjs'
 import SearchIdValidator from '../controllers/validators/SearchId.mjs'
 
-const eventEmitter = new EventEmitter();
-
-
-
 const Repository = new UserRepository(RepositoryImpl)
-eventEmitter.on('myEvent', handleUsers);
+
+
+const storeUsersUseCase = new StoreUsers(Repository);
 
 export async function users(_, res, next) {
   try {
-    eventEmitter.on('userCreated', handleUsers);
-
     const users = await getUsersApi();
-    const storeUserUseCase = new StoreUser(Repository);
-    const storedUser = await storeUserUseCase.execute(users);
+    const storedUser = await storeUsersUseCase.execute(users);
 
     return res.status(200).json(storedUser);
   } catch (error) {
     return next(error);
   }
 }
-
 
 export async function getUserById(req, res, next) {
   try {

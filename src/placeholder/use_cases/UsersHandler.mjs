@@ -1,5 +1,10 @@
-const handleUsers = (users) => {
-  console.log('mensagem aleatória para teste', users);
-};
+import EventEmitter from 'events';
 
-export default handleUsers;
+const eventEmitter = new EventEmitter();
+
+const handleUserCreated = (user) => {
+  console.log('Novo usuário criado:', user);
+};
+eventEmitter.on('userCreated', handleUserCreated);
+
+export default handleUserCreated;
