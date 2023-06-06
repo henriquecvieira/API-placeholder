@@ -1,7 +1,6 @@
 import usersByCreatedIdPresenter from "../presenters/usersByCreatedIdPresenter.mjs";
 import UUIDGenerator from "../../support/UUIDGenerator.mjs";
-import eventEmitter from "events"
-import handleUserCreated from "./usersHandler.mjs";
+import eventoEmitter from '../../events/EventEmitter.mjs';
 
 class StoreUsers {
   constructor(repository) {
@@ -24,9 +23,8 @@ class StoreUsers {
         _id: UUIDGenerator.generate(),
         ...param,
       };
-      await this.repository.save(newUser);
       resultCreateUser.push(newUser);
-      handleUserCreated(newUser)
+      eventoEmitter.emit('meuEvento', newUser)
     }
     const responseCreateUser = resultCreateUser.map((user) => ({
       ...user,
