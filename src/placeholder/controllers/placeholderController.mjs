@@ -12,6 +12,8 @@ import RemoveById from '../use_cases/RemoveById.mjs'
 import getUsersApi from "../use_cases/placeholderApiUseCase.mjs";
 import SearchById from '../use_cases/SearchById.mjs'
 import SearchIdValidator from '../controllers/validators/SearchId.mjs'
+import CreateUser from '../use_cases/CreateUser.mjs';
+import searchUsersByDate from '../use_cases/searchUsersByDate.mjs';
 
 const Repository = new UserRepository(RepositoryImpl)
 
