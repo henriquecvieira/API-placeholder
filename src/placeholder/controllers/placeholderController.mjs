@@ -3,7 +3,6 @@
 /* eslint-disable camelcase */
 
 import EventEmitter from 'events';
-import usersHandler from '../use_cases/usersHandler.mjs';
 import userByIdPresenter from '../presenters/usersByIdPresenter.mjs'
 import RepositoryImpl from '../../../infra/repository/index.mjs'
 import UserRepository from '../repositories/userRespository.mjs'
