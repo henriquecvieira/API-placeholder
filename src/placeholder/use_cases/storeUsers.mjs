@@ -13,7 +13,9 @@ class StoreUsers {
   async execute(params) {
     const resultCreateUser = []
     const resultExistentUsers = []
-    for (const param of params) {
+    const user = await this.repository.get()
+    const mergedUsers = [...params, ...user]
+    for (const param of mergedUsers) {
       let hasUser = await this.repository.getUserById(param.id)
       if (hasUser.length > 0) {
         console.log("users already exists!")

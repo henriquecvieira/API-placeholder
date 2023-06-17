@@ -67,6 +67,7 @@ export async function createUser(req, res, next) {
     const user = req.body
     const CreateUserUseCase = new CreateUser(Repository)
     const createdUser = await CreateUserUseCase.execute(user)
+    // const showInsertedUser = await storeUserUseCase.execute(user)
     return res.status(200).json(createdUser)
   } catch (error) {
     return next(error)

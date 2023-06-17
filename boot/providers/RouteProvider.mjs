@@ -1,6 +1,6 @@
-import healthCheck from '../../src/maintenance/healthcheck.mjs'
-import wrongWay from '../../src/maintenance/wrongWay.mjs'
-import user from '../../src/placeholder/routes.mjs'
+import healthCheck from "../../src/maintenance/healthcheck.mjs"
+import wrongWay from "../../src/maintenance/wrongWay.mjs"
+import user from "../../src/placeholder/routes.mjs"
 
 function registerRoutes(app) {
   app.use(healthCheck)
@@ -11,5 +11,5 @@ function registerRoutes(app) {
 export default {
   boot: (app) => {
     registerRoutes(app)
-  }
+  },
 }

@@ -14,6 +14,13 @@ class User {
     }
     return data
   }
+  async getAllUsers(id) {
+    const data = await this.repository.getAll(this.collection)
+    if (data?.length === 0) {
+      return null
+    }
+    return data
+  }
 
   async getUserById(id) {
     const data = await this.repository.searchUserById(this.collection, id)
