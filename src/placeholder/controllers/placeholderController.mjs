@@ -2,27 +2,31 @@
 /* eslint-disable no-shadow */
 /* eslint-disable camelcase */
 
-import userByIdPresenter from "../presenters/usersByIdPresenter.mjs"
-import RepositoryImpl from "../../../infra/repository/index.mjs"
-import UserRepository from "../repositories/userRespository.mjs"
-import CreateUser from "../use_cases/CreateUser.mjs"
-import StoreUser from "../use_cases/storeUsers.mjs"
-import RemoveById from "../use_cases/RemoveById.mjs"
-import getUsersApi from "../use_cases/placeholderApiUseCase.mjs"
-import SearchById from "../use_cases/SearchById.mjs"
-import SearchIdValidator from "../controllers/validators/SearchId.mjs"
-import searchUsersByDate from "../use_cases/searchUsersByDate.mjs"
+import EventEmitter from 'events';
+import userByIdPresenter from '../presenters/usersByIdPresenter.mjs'
+import RepositoryImpl from '../../../infra/repository/index.mjs'
+import UserRepository from '../repositories/userRespository.mjs'
+import StoreUsers from '../use_cases/storeUsers.mjs'
+import RemoveById from '../use_cases/RemoveById.mjs'
+import getUsersApi from "../use_cases/placeholderApiUseCase.mjs";
+import SearchById from '../use_cases/SearchById.mjs'
+import SearchIdValidator from '../controllers/validators/SearchId.mjs'
+import CreateUser from '../use_cases/CreateUser.mjs';
+import searchUsersByDate from '../use_cases/searchUsersByDate.mjs';
 
 const Repository = new UserRepository(RepositoryImpl)
 
+
+const storeUsersUseCase = new StoreUsers(Repository);
+
 export async function users(_, res, next) {
   try {
-    const users = await getUsersApi()
-    const storeUserUseCase = new StoreUser(Repository)
-    const storedUser = await storeUserUseCase.execute(users)
-    return res.status(200).json(storedUser)
+    const users = await getUsersApi();
+    const storedUser = await storeUsersUseCase.execute(users);
+
+    return res.status(200).json(storedUser);
   } catch (error) {
-    return next(error)
+    return next(error);
   }
 }
 

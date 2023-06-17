@@ -1,19 +1,16 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-continue */
-/* eslint-disable no-plusplus */
-/* eslint-disable no-await-in-loop */
 import usersByCreatedIdPresenter from "../presenters/usersByCreatedIdPresenter.mjs"
 import UUIDGenerator from "../../support/UUIDGenerator.mjs"
+import eventoEmitter from "../../events/EventEmitter.mjs"
 
 class StoreUsers {
   constructor(repository) {
     this.repository = repository
   }
+
   async execute(params) {
     const resultCreateUser = []
     const resultExistentUsers = []
-    const user = await this.repository.get()
+    const user = await this.repository.getAllUsers()
     const mergedUsers = [...params, ...user]
     for (const param of mergedUsers) {
       let hasUser = await this.repository.getUserById(param.id)
@@ -28,14 +25,13 @@ class StoreUsers {
         _id: UUIDGenerator.generate(),
         ...param,
       }
-      await this.repository.save(newUser)
       resultCreateUser.push(newUser)
+      eventoEmitter.emit("meuEvento", newUser)
     }
     const responseCreateUser = resultCreateUser.map((user) => ({
       ...user,
       createdAt: user.createdAt.toString(),
     }))
-
     return { resultExistentUsers, responseCreateUser }
   }
 }

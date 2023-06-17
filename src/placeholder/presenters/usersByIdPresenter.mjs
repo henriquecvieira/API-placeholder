@@ -5,12 +5,12 @@ export default function usersByIdPresenter(user) {
   return {
     _id,
     id,
+    name,
     address,
     phone,
     website,
     company,
     email,
-    name,
-    createdAt,
+    createdAt
   }
 }

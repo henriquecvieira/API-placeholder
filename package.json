@@ -29,13 +29,10 @@
     "pdf-creator-node": "^2.3.4",
     "pg": "^8.7.3",
     "pug": "^3.0.2",
-    "sentry": "^0.1.2",
     "swagger-ui-express": "^4.3.0",
     "uuid-mongodb": "^2.4.4"
   },
   "devDependencies": {
-    "@sentry/node": "^7.52.0",
-    "@sentry/tracing": "^7.52.0",
     "amazon-cognito-identity-js": "^6.2.0",
     "axios": "^1.4.0",
     "babel-eslint": "^10.1.0",

@@ -8,6 +8,8 @@ import RouteProvider from "./providers/RouteProvider.mjs"
 import cors from "cors"
 import swaggerDocument from "../infra/documents/swagger.js"
 import swaggerUi from "swagger-ui-express"
+import '../src/events/eventListener.mjs'
+
 
 // Date.prototype.toJSON = function () {
 //   this.setUTCHours(this.getUTCHours() - 3)
@@ -42,6 +44,7 @@ export default async (express) => {
   )
 
   await registerProviders(express)
+
 
   ExceptionHandler.handle(express)
 
