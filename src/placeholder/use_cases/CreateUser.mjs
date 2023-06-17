@@ -1,5 +1,6 @@
 import userByIdPresenter from "../presenters/usersByIdPresenter.mjs"
 import UUIDGenerator from "../../support/UUIDGenerator.mjs"
+import eventoEmitter from "../../events/EventEmitter.mjs"
 
 class CreateUser {
   constructor(repository) {
@@ -17,8 +18,9 @@ class CreateUser {
       _id: UUIDGenerator.generate(),
       ...user,
     }
+    eventoEmitter.emit("meuEvento", newUser)
 
-    await this.repository.save(newUser)
+    // await this.repository.save(newUser)
 
     const resultUser = userByIdPresenter(newUser)
     return resultUser
