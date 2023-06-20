@@ -29,6 +29,7 @@
     "pdf-creator-node": "^2.3.4",
     "pg": "^8.7.3",
     "pug": "^3.0.2",
+    "random": "^4.1.0",
     "swagger-ui-express": "^4.3.0",
     "uuid-mongodb": "^2.4.4"
   },

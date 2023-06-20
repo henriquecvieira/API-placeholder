@@ -186,10 +186,6 @@ export default {
           schema: {
             type: "object",
             properties: {
-              id: {
-                type: "number",
-                required: true,
-              },
               name: {
                 type: "string",
                 required: true,

@@ -13,14 +13,15 @@ class CreateUser {
       throw new Error("User with the same email already exists")
     }
 
+    const randomID = Math.floor(Math.random() * (1000 - 11 + 1) + 11);
+
     const newUser = {
+      id: randomID,
       createdAt: new Date(),
       _id: UUIDGenerator.generate(),
       ...user,
     }
     eventoEmitter.emit("meuEvento", newUser)
-
-    // await this.repository.save(newUser)
 
     const resultUser = userByIdPresenter(newUser)
     return resultUser
