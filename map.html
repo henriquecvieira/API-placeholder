@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Polígono</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+  </head>
+  <body>
+    <div id="map" style="height: 500px"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
+    <script>
+      // Inicializar o mapa
+      const map = L.map("map").setView([-23.5496, -46.6322], 16)
+
+      // Adicionar camada de mapa do OpenStreetMap
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map)
+
+      // Criar uma camada de polígono vazia
+      const polygonLayer = L.geoJSON().addTo(map)
+
+      // Estilizar a linha do polígono
+      const polygonStyle = {
+        color: "#ff0000", // Cor vermelha
+        weight: 3, // Espessura da linha em pixels
+        opacity: 1, // Opacidade da linha (0 a 1)
+      }
+
+      // Obter as coordenadas do polígono do endpoint da API
+      fetch("/users/polygon")
+        .then((response) => response.json())
+        .then((data) => {
+          const { polygonCoordinates } = data
+
+          // Exibir a linha do polígono no mapa
+          const polygonLine = L.polyline(
+            polygonCoordinates,
+            polygonStyle
+          ).addTo(polygonLayer)
+          map.fitBounds(polygonLine.getBounds())
+        })
+        .catch((error) => console.error(error))
+    </script>
+  </body>
+</html>

@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@turf/turf": "^6.5.0",
     "adm-zip": "^0.5.10",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
@@ -24,10 +25,12 @@
     "html-pdf": "^3.0.1",
     "indicative": "^5.0.8",
     "jwk-to-pem": "^2.0.5",
+    "knex": "^2.5.1",
+    "leaflet": "^1.9.4",
     "moment": "^2.29.1",
     "node-excel-export": "^1.4.4",
     "pdf-creator-node": "^2.3.4",
-    "pg": "^8.7.3",
+    "pg": "^8.11.1",
     "pug": "^3.0.2",
     "swagger-ui-express": "^4.3.0",
     "uuid-mongodb": "^2.4.4"
