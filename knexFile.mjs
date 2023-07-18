@@ -1,9 +1,13 @@
+// app.mjs
 import express from "express"
 import knex from "knex"
 import { v4 as uuidv4 } from "uuid"
-import { getCoords } from "@turf/turf"
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon"
+import geolib from "geolib"
+import * as turf from "@turf/turf"
 
 const app = express()
+app.use(express.json())
 
 const db = knex({
   client: "pg",
@@ -15,9 +19,6 @@ const db = knex({
   },
 })
 
-app.use(express.json())
-
-// Função para criar a tabela "users" com a coluna "geolocation"
 const createUsersTable = async () => {
   await db.schema.createTable("users", (table) => {
     table.uuid("_id").primary()
@@ -29,33 +30,65 @@ const createUsersTable = async () => {
     table.jsonb("company").notNullable()
     table.string("email").notNullable()
     table.timestamp("createdAt").defaultTo(db.fn.now())
-    table.specificType("area", "GEOMETRY(Polygon, 4326)") // Adicionando a coluna de área como um polígono
+    table.specificType("area", "GEOMETRY(Polygon, 4326)")
   })
 }
+app.post("/users", async (req, res) => {
+  try {
+    const { areaCoordinates, ...userData } = req.body
+    const userId = uuidv4()
+    const areaGeomWKT = `POLYGON((${areaCoordinates
+      .map((coords) => coords.join(" "))
+      .join(",")}))`
 
-const createPolygonGeometry = (coordinates) => {
-  // O objeto geométrico de polígono deve ser representado como um array de arrays de coordenadas
-  // O primeiro e o último ponto devem ser iguais para fechar o polígono
+    if (!(await db.schema.hasTable("users"))) {
+      await createUsersTable()
+    }
 
-  // Convertendo as coordenadas em um formato compatível com o PostgreSQL
-  const polygonCoordinates = coordinates.map((coord) => {
-    return `${coord[1]} ${coord[0]}` // Invertendo a ordem das coordenadas (latitude, longitude)
-  })
+    await db("users").insert({
+      ...userData,
+      _id: userId,
+      area_geom: db.raw(`ST_GeomFromText('${areaGeomWKT}', 4326)`),
+    })
 
-  return `POLYGON((${polygonCoordinates.join(", ")}, ${polygonCoordinates[0]}))`
+    res.status(201).json({ message: "Usuário salvo com sucesso!" })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Erro ao salvar usuário." })
+  }
+})
+function wktToGeoJSON(wkt) {
+  let polygonCoordinates
+  if (typeof wkt === "string") {
+    console.log("wkt recebido:", wkt)
+    // Extract coordinates from WKT string
+    const coords = wkt.substring(wkt.indexOf("((") + 2, wkt.lastIndexOf("))"))
+    polygonCoordinates = coords.split(",").map((coord) => {
+      const [lng, lat] = coord.trim().split(" ")
+      return [parseFloat(lat), parseFloat(lng)]
+    })
+  } else if (Array.isArray(wkt)) {
+    // Assume the input is already an array of coordinates [lng, lat]
+    polygonCoordinates = wkt.map((coord) => [
+      parseFloat(coord[1]),
+      parseFloat(coord[0]),
+    ])
+  } else {
+    throw new Error("Invalid input format for areaCoordinates.")
+  }
+
+  return {
+    type: "Polygon",
+    coordinates: [polygonCoordinates],
+  }
 }
 
 app.get("/users/polygon", async (req, res) => {
   try {
-    // Obter as coordenadas do polígono do banco de dados (substitua "users" pelo nome correto da tabela)
-    const polygonCoordinates = await db
-      .select("area") // Selecionar a coluna "area" que contém as coordenadas do polígono
-      .from("users") // Tabela onde os dados estão armazenados (substitua "users" pelo nome correto da tabela)
-      .first() // Obter apenas o primeiro resultado (supondo que haja apenas um registro com as coordenadas)
+    const polygonCoordinates = await db.select("area").from("users").first()
 
     if (polygonCoordinates && polygonCoordinates.area) {
-      // Retornar as coordenadas do polígono como resposta
-      res.status(200).json({ polygonCoordinates: polygonCoordinates.area })
+      res.status(200).json(polygonCoordinates.area)
     } else {
       res.status(404).json({ message: "Nenhum polígono encontrado." })
     }
@@ -67,25 +100,46 @@ app.get("/users/polygon", async (req, res) => {
   }
 })
 
-app.post("/users", async (req, res) => {
+app.get("/check-point/:lat/:lng", async (req, res) => {
   try {
-    const { areaCoordinates, ...userData } = req.body
+    const { lat, lng } = req.params
 
-    // Gerando um ID único para o usuário usando o pacote "uuid"
-    const userId = uuidv4()
+    // Arredondar as coordenadas para evitar problemas de precisão
+    const roundedLat = parseFloat(lat).toFixed(6)
+    const roundedLng = parseFloat(lng).toFixed(6)
+    const pointWKT = `POINT(${roundedLng} ${roundedLat})`
 
-    const area = createPolygonGeometry(areaCoordinates)
+    const users = await db
+      .select("area_geom")
+      .from("users")
+      .whereRaw("ST_Contains(area_geom, ST_GeomFromText(?, 4326))", [pointWKT])
 
-    if (!(await db.schema.hasTable("users"))) {
-      await createUsersTable()
+    if (users.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Nenhum usuário encontrado dentro do polígono." })
     }
 
-    await db("users").insert({ ...userData, _id: userId, area })
+    const point = turf.point([parseFloat(roundedLng), parseFloat(roundedLat)])
 
-    res.status(201).json({ message: "Usuário salvo com sucesso!" })
+    const usersInsidePolygon = users.filter((user) => {
+      const geoJSONPolygon = wktToGeoJSON(user.area_geom)
+      return turf.booleanPointInPolygon(point, geoJSONPolygon, {
+        ignoreBoundary: true,
+      })
+    })
+
+    if (usersInsidePolygon.length > 0) {
+      res.status(200).json({
+        message: "Existem usuários dentro do polígono.",
+        users: usersInsidePolygon,
+      })
+    } else {
+      res.status(200).json({ message: "Não há usuários dentro do polígono." })
+    }
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Erro ao salvar usuário." })
+    console.error("Error processing request:", error)
+    res.status(500).json({ message: "Erro ao processar a solicitação." })
   }
 })
 

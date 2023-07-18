@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^6.5.0",
     "@turf/turf": "^6.5.0",
     "adm-zip": "^0.5.10",
     "ajv": "^8.11.0",
@@ -22,6 +23,7 @@
     "crypto": "^1.0.1",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
+    "geolib": "^3.3.4",
     "html-pdf": "^3.0.1",
     "indicative": "^5.0.8",
     "jwk-to-pem": "^2.0.5",
@@ -33,7 +35,8 @@
     "pg": "^8.11.1",
     "pug": "^3.0.2",
     "swagger-ui-express": "^4.3.0",
-    "uuid-mongodb": "^2.4.4"
+    "uuid-mongodb": "^2.4.4",
+    "wkt-parser": "^1.3.3"
   },
   "devDependencies": {
     "amazon-cognito-identity-js": "^6.2.0",
