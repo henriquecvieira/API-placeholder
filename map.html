@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Polígono</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+  </head>
+  <body>
+    <div id="map" style="height: 500px"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
+    <script>
+      const polygonCoordinates = [
+        [-46.62, -23.6207],
+        [-46.6191, -23.6202],
+        [-46.6163, -23.6198],
+        [-46.6165, -23.6214],
+        [-46.62, -23.6207],
+      ]
+
+      function wktToGeoJSON(wkt) {
+        const coords = wkt.substring(
+          wkt.indexOf("((") + 2,
+          wkt.lastIndexOf("))")
+        )
+        const polygonCoordinates = coords.split(",").map((coord) => {
+          const [lng, lat] = coord.trim().split(" ")
+          return [parseFloat(lat), parseFloat(lng)]
+        })
+
+        return {
+          type: "Polygon",
+          coordinates: [polygonCoordinates],
+        }
+      }
+
+      function initMap(polygonCoordinates) {
+        const center = turf.center(turf.polygon([polygonCoordinates]))
+        const map = L.map("map").setView(
+          [center.geometry.coordinates[1], center.geometry.coordinates[0]],
+          16
+        )
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map)
+
+        const polygonLayer = L.geoJSON().addTo(map)
+
+        const polygonStyle = {
+          color: "#ff0000",
+          weight: 3,
+          opacity: 1,
+        }
+        const polygonLine = L.geoJSON(turf.polygon([polygonCoordinates]), {
+          style: polygonStyle,
+        }).addTo(polygonLayer)
+
+        map.fitBounds(polygonLine.getBounds())
+      }
+      initMap(polygonCoordinates)
+    </script>
+  </body>
+</html>

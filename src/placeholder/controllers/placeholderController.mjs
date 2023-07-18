@@ -16,11 +16,10 @@ import searchUsersByDate from "../use_cases/searchUsersByDate.mjs"
 
 const Repository = new UserRepository(RepositoryImpl)
 
-const storeUsersUseCase = new StoreUsers(Repository)
-
 export async function users(_, res, next) {
   try {
     const users = await getUsersApi()
+    const storeUsersUseCase = new StoreUsers(Repository)
     const storedUser = await storeUsersUseCase.execute(users)
     return res.status(200).json(storedUser)
   } catch (error) {
@@ -69,7 +68,6 @@ export async function createUser(req, res, next) {
     const user = req.body
     const CreateUserUseCase = new CreateUser(Repository)
     const createdUser = await CreateUserUseCase.execute(user)
-    // const showInsertedUser = await storeUserUseCase.execute(user)
     return res.status(200).json(createdUser)
   } catch (error) {
     return next(error)

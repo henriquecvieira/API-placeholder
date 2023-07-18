@@ -8,8 +8,8 @@ class CreateUser {
   }
 
   async execute(user) {
-    const existingUser = await this.repository.searchUserByEmail(user.email)
-    if (existingUser) {
+    const existentUser = await this.repository.searchUserByEmail(user.email)
+    if (existentUser) {
       throw new Error("User with the same email already exists")
     }
 
