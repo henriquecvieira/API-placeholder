@@ -105,8 +105,8 @@ app.get("/check-point/:lat/:lng", async (req, res) => {
     const { lat, lng } = req.params
 
     // Arredondar as coordenadas para evitar problemas de precisão
-    const roundedLat = parseFloat(lat).toFixed(6)
-    const roundedLng = parseFloat(lng).toFixed(6)
+    const roundedLat = Number(lat)
+    const roundedLng = Number(lng)
     const pointWKT = `POINT(${roundedLng} ${roundedLat})`
 
     const users = await db
