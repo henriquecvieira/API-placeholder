@@ -34,6 +34,7 @@
     "pdf-creator-node": "^2.3.4",
     "pg": "^8.11.1",
     "pug": "^3.0.2",
+    "random": "^4.1.0",
     "swagger-ui-express": "^4.3.0",
     "terraformer-wkt-parser": "^1.2.1",
     "uuid-mongodb": "^2.4.4",
