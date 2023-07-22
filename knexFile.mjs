@@ -57,31 +57,6 @@ app.post("/users", async (req, res) => {
     res.status(500).json({ message: "Erro ao salvar usuário." })
   }
 })
-function wktToGeoJSON(wkt) {
-  let polygonCoordinates
-  if (typeof wkt === "string") {
-    console.log("wkt recebido:", wkt)
-    // Extract coordinates from WKT string
-    const coords = wkt.substring(wkt.indexOf("((") + 2, wkt.lastIndexOf("))"))
-    polygonCoordinates = coords.split(",").map((coord) => {
-      const [lng, lat] = coord.trim().split(" ")
-      return [parseFloat(lat), parseFloat(lng)]
-    })
-  } else if (Array.isArray(wkt)) {
-    // Assume the input is already an array of coordinates [lng, lat]
-    polygonCoordinates = wkt.map((coord) => [
-      parseFloat(coord[1]),
-      parseFloat(coord[0]),
-    ])
-  } else {
-    throw new Error("Invalid input format for areaCoordinates.")
-  }
-
-  return {
-    type: "Polygon",
-    coordinates: [polygonCoordinates],
-  }
-}
 
 app.get("/users/polygon", async (req, res) => {
   try {
@@ -100,29 +75,40 @@ app.get("/users/polygon", async (req, res) => {
   }
 })
 
+const wktToGeoJSON = (wkt) => {
+  // Remova a função wktToGeoJSON anterior e substitua pelo seguinte:
+
+  if (typeof wkt !== "string") {
+    throw new Error("Invalid input format for areaCoordinates.")
+  }
+
+  // Parse the GeoJSON directly from the database representation
+  const geoJSON = JSON.parse(wkt)
+
+  if (geoJSON.type !== "Polygon") {
+    throw new Error("Invalid GeoJSON type. Only Polygon is supported.")
+  }
+
+  return geoJSON
+}
+
 app.get("/check-point/:lat/:lng", async (req, res) => {
   try {
     const { lat, lng } = req.params
+    const pointWKT = `POINT(${lng} ${lat})`
+    console.log("pointWKT:", pointWKT)
 
-    const roundedLat = Number(lat)
-    const roundedLng = Number(lng)
-    const pointWKT = `POINT(${roundedLng} ${roundedLat})`
-
-    const users = await db
-      .select("area_geom")
+    const usersResult = await db
+      .select(db.raw("ST_AsGeoJSON(area_geom) as area_geom"))
       .from("users")
-      .whereRaw("ST_Contains(area_geom, ST_GeomFromText(?, 4326))", [pointWKT])
 
-    if (users.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "Nenhum usuário encontrado dentro do polígono." })
-    }
+    const point = turf.point([Number(lng), Number(lat)])
 
-    const point = turf.point([parseFloat(roundedLng), parseFloat(roundedLat)])
-
-    const usersInsidePolygon = users.filter((user) => {
+    const usersInsidePolygon = usersResult.filter((user) => {
       const geoJSONPolygon = wktToGeoJSON(user.area_geom)
+
+      console.log("GeoJSON polygon:", geoJSONPolygon)
+
       return turf.booleanPointInPolygon(point, geoJSONPolygon, {
         ignoreBoundary: true,
       })
