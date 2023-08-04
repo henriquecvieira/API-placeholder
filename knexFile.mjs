@@ -5,6 +5,9 @@ import { v4 as uuidv4 } from "uuid"
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon"
 import geolib from "geolib"
 import * as turf from "@turf/turf"
+import wellknown from "wellknown";
+import wkx from "wkx";
+
 
 const app = express()
 app.use(express.json())
@@ -75,58 +78,75 @@ app.get("/users/polygon", async (req, res) => {
   }
 })
 
-const wktToGeoJSON = (wkt) => {
-  // Remova a função wktToGeoJSON anterior e substitua pelo seguinte:
 
-  if (typeof wkt !== "string") {
-    throw new Error("Invalid input format for areaCoordinates.")
+
+const wktToGeoJSON = (wktString) => {
+  if (typeof wktString !== "string") {
+    throw new Error("Invalid input format for areaCoordinates.");
   }
 
-  // Parse the GeoJSON directly from the database representation
-  const geoJSON = JSON.parse(wkt)
+  console.log("WKT:", wktString);
+
+  const geoJSON = wellknown.parse(wktString);
+
+  console.log("Parsed GeoJSON:", geoJSON);
+
+  if (geoJSON === null) {
+    throw new Error("Failed to parse WKT to GeoJSON.");
+  }
 
   if (geoJSON.type !== "Polygon") {
-    throw new Error("Invalid GeoJSON type. Only Polygon is supported.")
+    throw new Error("Invalid GeoJSON type. Only Polygon is supported.");
   }
 
-  return geoJSON
-}
+  return geoJSON;
+};
 
 app.get("/check-point/:lat/:lng", async (req, res) => {
   try {
-    const { lat, lng } = req.params
-    const pointWKT = `POINT(${lng} ${lat})`
-    console.log("pointWKT:", pointWKT)
+    const { lat, lng } = req.params;
+    const pointWKT = `POINT(${lng} ${lat})`;
+    console.log("pointWKT:", pointWKT);
 
-    const usersResult = await db
-      .select(db.raw("ST_AsGeoJSON(area_geom) as area_geom"))
-      .from("users")
+    const usersResult = await db.select("*").from("users");
 
-    const point = turf.point([Number(lng), Number(lat)])
+    const point = turf.point([Number(lng), Number(lat)]);
 
-    const usersInsidePolygon = usersResult.filter((user) => {
-      const geoJSONPolygon = wktToGeoJSON(user.area_geom)
+    const usersInsidePolygon = await Promise.all(
+      usersResult.map(async (user) => {
+        if (!user.area_geom) {
+          return null;
+        }
 
-      console.log("GeoJSON polygon:", geoJSONPolygon)
+        const geoJSONPolygon = wktToGeoJSON(user.area_geom);
+        console.log("GeoJSON polygon:", geoJSONPolygon);
 
-      return turf.booleanPointInPolygon(point, geoJSONPolygon, {
-        ignoreBoundary: true,
+        const isInside = await db.raw(
+          `SELECT ST_Contains(ST_SetSRID(ST_GeomFromWKB(?), 4326), ST_SetSRID(ST_GeomFromText('POINT(${lng} ${lat})'), 4326)) as is_inside`,
+          [user.area_geom]
+        );
+
+        if (isInside.rows[0].is_inside) {
+          return user;
+        } else {
+          return null;
+        }
       })
-    })
+    );
 
-    if (usersInsidePolygon.length > 0) {
-      res.status(200).json({
-        message: "Existem usuários dentro do polígono.",
-        users: usersInsidePolygon,
-      })
-    } else {
-      res.status(200).json({ message: "Não há usuários dentro do polígono." })
-    }
+    const filteredUsers = usersInsidePolygon.filter((user) => user !== null);
+
+    res.status(200).json({
+      message: "Usuários encontrados dentro do polígono:",
+      users: filteredUsers,
+    });
   } catch (error) {
-    console.error("Error processing request:", error)
-    res.status(500).json({ message: "Erro ao processar a solicitação." })
+    console.error("Error processing request:", error);
+    res.status(500).json({ message: "Erro ao processar a solicitação." });
   }
-})
+});
+
+
 
 const PORT = 3000
 app.listen(PORT, () => {

@@ -13,6 +13,7 @@ import SearchById from "../use_cases/SearchById.mjs"
 import SearchIdValidator from "../controllers/validators/SearchId.mjs"
 import CreateUser from "../use_cases/CreateUser.mjs"
 import searchUsersByDate from "../use_cases/searchUsersByDate.mjs"
+import AdmZip from 'adm-zip';
 
 const Repository = new UserRepository(RepositoryImpl)
 
@@ -73,3 +74,30 @@ export async function createUser(req, res, next) {
     return next(error)
   }
 }
+
+
+export async function sendUsers(req, res, next) {
+  try {
+    const users = req.body;
+    const zip = new AdmZip();
+
+    users.forEach((user, index) => {
+      const userData = JSON.stringify(user, null, 2);
+      zip.addFile(`user${index}.json`, Buffer.alloc(Buffer.byteLength(userData, 'utf8'), userData, 'utf8'));
+    });
+
+    const zipBuffer = zip.toBuffer();
+    const response = await axios.post('https://sua-outra-api.com/receiveUsers', zipBuffer, {
+      headers: {
+        'Content-Type': 'application/zip',
+      },
+    });
+
+        return res.status(response.status).json(response.data);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+
+

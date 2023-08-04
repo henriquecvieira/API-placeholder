@@ -5,11 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Run Current File",
       "type": "node",
       "request": "launch",
-      "name": "Iniciar o Programa",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\knexFile.mjs"
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}\\app.mjs"
     }
   ]
 }

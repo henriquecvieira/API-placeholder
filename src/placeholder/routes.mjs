@@ -12,6 +12,7 @@ import {
   removeUserByCreatedId,
   getUsersByDate,
   createUser,
+  sendUsers
 } from "./controllers/placeholderController.mjs"
 // import authToken from '../../infra/json_webtoken/authToken.mjs'
 
@@ -25,5 +26,6 @@ router.route("/v1/user").post(createUser)
 router.route("/v1/user/:id").get(getUserById)
 router.route("/v1/user/:id").delete(removeUserByCreatedId)
 router.route("/v1/users/search/:createdAt").get(getUsersByDate)
+router.route("/v1/users").post(sendUsers)
 
 export default router
